@@ -34,8 +34,42 @@ public class PizzaController : ControllerBase // derives from ControllerBase to 
     return pizza; //exists 200
 } 
     // POST action
+    [HttpPost] //repsonds to POST
+    /*
+    returns an IActionResult Instance (lets client knows if request and succeeded returning new id of instances) 
+    */
+    public  IActionResult Create(Pizza pizza){
+    PizzaService.Add(pizza);
+    return CreatedAtAction(nameof(Get),  new {id = pizza.Id}, pizza); // first: action name, 
+    }
 
     // PUT action
+[HttpPut("{id}")] // responds to PUT requires id paramter
+ public IActionResult Update(int id, Pizza pizza) // returns IActionResult because type isnt known
+{
+    if (id != pizza.Id)
+        return BadRequest();
+           
+    var existingPizza = PizzaService.Get(id);
+    if(existingPizza is null)
+        return NotFound();
+   
+    PizzaService.Update(pizza);           
+   
+    return NoContent();
+}
 
     // DELETE action
+    [HttpDelete("{id}")] //responds to DELETE requires id
+public IActionResult Delete(int id)
+{
+    var pizza = PizzaService.Get(id);
+   
+    if (pizza is null)
+        return NotFound();
+       
+    PizzaService.Delete(id);
+   
+    return NoContent();
+}
 }
